@@ -44,7 +44,7 @@ Para executar este projeto localmente, siga os passos abaixo.
 
 1.  **Clone o repositório:**
     ```bash
-    git clone <URL_DO_SEU_REPOSITORIO>
+    git clone https://github.com/Gateiro/todoList-flutter-firebase.git
     ```
 2.  **Acesse o diretório do projeto:**
     ```bash
