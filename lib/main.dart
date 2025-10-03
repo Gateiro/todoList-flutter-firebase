@@ -2,16 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
-
 //1. Ponto de entrada dos aplicativos flutter
 Future<void> main() async {
   //Garante que o flutter esteja inicializado antes de rodar o app.
   WidgetsFlutterBinding.ensureInitialized();
   //Inicializa o Firebase com as configs da plataforma (firebase_options.dart)
-  await Firebase.initializeApp(
-  options: DefaultFirebaseOptions.currentPlatform,
-);
-  //Inicializa no widget principal.  
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  //Inicializa no widget principal.
   runApp(const MyApp());
 }
 
@@ -30,7 +27,7 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       // ------------------------ Tela principal ----------------------------------------
-      home: const TodoListScreen(title: 'Sanrio - Tarefas'),
+      home: const TodoListScreen(),
     );
   }
 }
@@ -44,21 +41,19 @@ class TodoListScreen extends StatefulWidget {
   State<TodoListScreen> createState() => _TodoListScreenState();
 }
 
-class _TodoListScreen extends State<TodoListScreen> {
-  @overried
+class _TodoListScreenState extends State<TodoListScreen> {
+  @override
   Widget build(BuildContext context) {
     //Scaffold nos dá a estrutura visual básica da página (app bar, body, etc)
-      return Scaffold(appBar: AppBar(
+    return Scaffold(
+      appBar: AppBar(
         //O título que aparecerá na barra superior.
         title: const Text('Sanrio - Minhas Tarefas'),
         centerTitle: true,
       ),
       //--------------- Corpo do aplicativo -------------------------------------
       body: const Center(
-        child: Text(
-          'Nenhuma tarefa ainda rs',
-          style: TextStyle(fontSize: 18),
-        ),
+        child: Text('Nenhuma tarefa ainda rs', style: TextStyle(fontSize: 18)),
       ),
       // -------- Botão flutuante - Adicionar tarefas -------------------------------
       floatingActionButton: FloatingActionButton(
@@ -71,4 +66,3 @@ class _TodoListScreen extends State<TodoListScreen> {
     );
   }
 }
-
