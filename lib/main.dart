@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'firebase_options.dart';
 
 //1. Ponto de entrada dos aplicativos flutter
@@ -42,6 +43,10 @@ class TodoListScreen extends StatefulWidget {
 }
 
 class _TodoListScreenState extends State<TodoListScreen> {
+  // ------ Seção Coleção de Tarefas no Firestore ----------------
+  final CollectionReference _taskCollection = FirebaseFirestore.instance
+      .collection('tarefas');
+
   @override
   Widget build(BuildContext context) {
     //Scaffold nos dá a estrutura visual básica da página (app bar, body, etc)
@@ -52,9 +57,49 @@ class _TodoListScreenState extends State<TodoListScreen> {
         centerTitle: true,
       ),
       //--------------- Corpo do aplicativo -------------------------------------
-      body: const Center(
-        child: Text('Nenhuma tarefa ainda rs', style: TextStyle(fontSize: 18)),
+      body: StreamBuilder(
+        stream: _taskCollection.snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          //Loading de carregamento de dados.
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          // Mensagem de erro para algum erro de conexão --
+          if (snapshot.hasError) {
+            return const Center(child: Text('Ocorreu um erro!'));
+          }
+
+          // Se os dados chegarem mas a lista estiver vazia
+          if (snapshot.hasData && snapshot.data!.docs.isEmpty) {
+            return const Center(
+              child: Text(
+                'Nenhuma tarefa ainda! Adicione uma no botão +',
+                style: TextStyle(fontSize: 18),
+              ),
+            );
+          }
+
+          //Construir a lista com os dados encontrados
+          return ListView.builder(
+            // A quantidade de itens na lista será o número de documentos que recebemos.
+            itemCount: snapshot.data!.docs.length,
+            // Como construir cada item da lsita.
+            itemBuilder: (context, index) {
+              // Pegar o doc (tarefa atual).
+              final DocumentSnapshot documentSnapshot =
+                  snapshot.data!.docs[index];
+
+              // ListTile é um widget pronto, ótimo para exibir uma  linha em uma lista.
+              return ListTile(
+                // O título do ListTile será o valor do campo 'titulo' do nosso doc
+                title: Text(documentSnapshot['titulo']),
+              );
+            },
+          );
+        },
       ),
+
       // -------- Botão flutuante - Adicionar tarefas -------------------------------
       floatingActionButton: FloatingActionButton(
         onPressed: () {
