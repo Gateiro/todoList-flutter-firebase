@@ -1,9 +1,3 @@
-Olá\! Com certeza\! Analisei a estrutura e o código do seu projeto para criar um `README.md` completo e informativo que descreve sua aplicação de lista de tarefas.
-
-Aqui está uma sugestão de `README.md` para o seu projeto. Você pode copiar e colar o conteúdo abaixo em um novo arquivo chamado `README.md` na raiz do seu projeto.
-
------
-
 # To-Do List App com Flutter & Firebase
 
 Um aplicativo de lista de tarefas simples e funcional, desenvolvido com Flutter e integrado ao Firebase para armazenamento e sincronização de dados em tempo real.
