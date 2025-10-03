@@ -8,7 +8,7 @@ Aqui está uma sugestão de `README.md` para o seu projeto. Você pode copiar e 
 
 Um aplicativo de lista de tarefas simples e funcional, desenvolvido com Flutter e integrado ao Firebase para armazenamento e sincronização de dados em tempo real.
 
-## Überblick
+## Resumo
 
 Este projeto é um aplicativo de lista de tarefas (To-Do List) que permite aos usuários adicionar, visualizar, marcar como concluídas e excluir tarefas. A aplicação utiliza o Cloud Firestore do Firebase como backend, o que garante que as tarefas sejam sincronizadas em tempo real entre todos os dispositivos conectados.
 
@@ -75,8 +75,6 @@ Abaixo está uma visão geral da estrutura de arquivos e diretórios mais import
 ```
 
 ## 🖼️ Screenshots
-
-*(Adicione aqui screenshots do seu aplicativo para demonstrar a aparência e o funcionamento)*
 
 |       Tela Principal       |     Adicionando Tarefa      |
 | :-------------------------:| :-------------------------: |
