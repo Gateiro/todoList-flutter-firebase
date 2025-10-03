@@ -167,7 +167,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
                   snapshot.data!.docs[index];
               final bool isCompleted = documentSnapshot['concluida'];
 
-              // ListTile é um widget pronto, ótimo para exibir uma  linha em uma lista.
+              // ListTile é um widget pronto exibir uma  linha em uma lista.
               return Card(
                 margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 child: CheckboxListTile(
