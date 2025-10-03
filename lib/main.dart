@@ -47,6 +47,81 @@ class _TodoListScreenState extends State<TodoListScreen> {
   final CollectionReference _taskCollection = FirebaseFirestore.instance
       .collection('tarefas');
 
+  // --- Controlador para o campo onde o usuário digita a tarefa ----
+  final TextEditingController _taskTitleController = TextEditingController();
+
+  // -- Método Async para ADICIONAR Tarefa -----
+  Future<void> _addTask() async {
+    final String title = _taskTitleController.text;
+    //Verificação de campo vazio.
+    if (title.isNotEmpty) {
+      // Adiciona um novo documento à coleção 'tarefas'.
+      // O FB cria um ID automático para o doc.
+      await _taskCollection.add({'titulo': title, 'concluida': false});
+
+      //Limpar o campo de texto após add tarefa ----------------
+      _taskTitleController.clear();
+      //Fecha o painel inferior
+      Navigator.of(context).pop();
+    }
+  }
+
+  // -- Método para ATUALIZAR tarefa ---
+  Future<void> _updateTask(String taskId, bool isCompleted) async {
+    await _taskCollection.doc(taskId).update({'concluida': isCompleted});
+  }
+
+  // -- Método para DELETAR tarefa ---
+  Future<void> _deleteTask(String taskId) async {
+    await _taskCollection.doc(taskId).delete();
+  }
+
+  // ---- Método: Construir e exibir painel de add tarefas
+  void _showAddTaskPanel() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            top: 20,
+            left: 20,
+            right: 20,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Adicionar Nova Tarefa',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 20),
+              // Campo de texto para o titulo da tarefa.
+              TextField(
+                controller: _taskTitleController,
+                autofocus: true,
+                decoration: const InputDecoration(
+                  labelText: 'Título da Tarefa',
+                ),
+              ),
+              const SizedBox(height: 20),
+              // BOtão para salvar tarefa
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _addTask,
+                  child: const Text('Salvar'),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     //Scaffold nos dá a estrutura visual básica da página (app bar, body, etc)
@@ -75,6 +150,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
             return const Center(
               child: Text(
                 'Nenhuma tarefa ainda! Adicione uma no botão +',
+                textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 18),
               ),
             );
@@ -89,11 +165,36 @@ class _TodoListScreenState extends State<TodoListScreen> {
               // Pegar o doc (tarefa atual).
               final DocumentSnapshot documentSnapshot =
                   snapshot.data!.docs[index];
+              final bool isCompleted = documentSnapshot['concluida'];
 
               // ListTile é um widget pronto, ótimo para exibir uma  linha em uma lista.
-              return ListTile(
-                // O título do ListTile será o valor do campo 'titulo' do nosso doc
-                title: Text(documentSnapshot['titulo']),
+              return Card(
+                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                child: CheckboxListTile(
+                  title: Text(
+                    documentSnapshot['titulo'],
+                    style: TextStyle(
+                      decoration: isCompleted
+                          ? TextDecoration.lineThrough
+                          : TextDecoration.none,
+                    ),
+                  ),
+                  //O valor do checkbox é o do campo concluído!!!
+                  value: isCompleted,
+                  // Ao tocar o checkbox chamamos o método de atualização ------------
+                  onChanged: (bool? value) {
+                    if (value != null) {
+                      _updateTask(documentSnapshot.id, value);
+                    }
+                  },
+                  // Icone de lixeira
+                  secondary: IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.red),
+                    onPressed: () {
+                      _deleteTask(documentSnapshot.id);
+                    },
+                  ),
+                ),
               );
             },
           );
@@ -102,9 +203,8 @@ class _TodoListScreenState extends State<TodoListScreen> {
 
       // -------- Botão flutuante - Adicionar tarefas -------------------------------
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // ----- Ação - Adicionar nova tarefa ------------------------------------
-        },
+        // ----- Ação - Chama o método do painel ------------------------------------
+        onPressed: _showAddTaskPanel,
         tooltip: 'Adicionar Tarefa',
         child: const Icon(Icons.add),
       ),
