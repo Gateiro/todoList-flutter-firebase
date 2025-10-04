@@ -20,10 +20,42 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       //Desativa o banner de 'Debug'
       title: 'Sanrio ToDo List',
       theme: ThemeData(
-        //DEFINIR TEMA PADRÃO DO APP.
+        // ---- Cor principal -----
+        primaryColor: const Color(0xFFF9A8D4),
+        // ---  Cor de fundo --------
+        scaffoldBackgroundColor: const Color(0xFFFDF2F8),
+        // --- Config para o AppBar ------
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFFF9A8D4),
+          foregroundColor: Color(0xFF831843),
+          elevation: 0,
+        ),
+        // --- Config para o floating action button ---
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          backgroundColor: Color(0xFFEC4899),
+          foregroundColor: Colors.white,
+        ),
+        // --- Estilo dos botões elevados ----
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Color(0xFFEC4899),
+            foregroundColor: Colors.white,
+          ),
+        ),
+        // --- Tema dos checkboxes ---------
+        checkboxTheme: CheckboxThemeData(
+          fillColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return const Color(0xFFEC4899);
+            }
+            return null;
+          }),
+        ),
+
         primarySwatch: Colors.pink,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
@@ -61,6 +93,8 @@ class _TodoListScreenState extends State<TodoListScreen> {
 
       //Limpar o campo de texto após add tarefa ----------------
       _taskTitleController.clear();
+
+      if (!mounted) return;
       //Fecha o painel inferior
       Navigator.of(context).pop();
     }
@@ -149,7 +183,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
           if (snapshot.hasData && snapshot.data!.docs.isEmpty) {
             return const Center(
               child: Text(
-                'Nenhuma tarefa ainda! Adicione uma no botão +',
+                'Nenhuma tarefa ainda!\nAdicione uma no botão +',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 18),
               ),
